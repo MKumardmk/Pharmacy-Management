@@ -1,0 +1,63 @@
+from django.shortcuts import render
+
+def index(request):
+    title = "generate Reports"
+    return render(request, 'reports.html', {'title': title})
+from django.shortcuts import render
+from django.db.models import Q
+from datetime import datetime
+
+def getData(request):
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    resource = request.GET.get('resource')
+
+    if resource == 'sales':
+        sales = Sales.objects.filter(created_at__date__range=[from_date, to_date])
+        total_sales = sales.count()
+        total_cash = sales.aggregate(total_price=Sum('total_price'))['total_price']
+        title = "Sales Reports"
+        return render(request, 'reports.html', {'sales': sales, 'title': title, 'total_sales': total_sales, 'total_cash': total_cash})
+
+    if resource == 'products':
+        products = Product.objects.filter(created_at__date__range=[from_date, to_date])
+        title = "Products Reports"
+        return render(request, 'reports.html', {'products': products, 'title': title})
+
+    if resource == 'purchases':
+        purchases = Purchase.objects.filter(created_at__date__range=[from_date, to_date])
+        title = "Purchases Reports"
+        return render(request, 'reports.html', {'purchases': purchases, 'title': title})
+
+    return render(request, 'reports.html')
+
+
+
+
+from django.shortcuts import render
+from datetime import datetime
+
+def getData(request):
+    if request.method == 'POST':
+        from_date = request.POST.get('from_date')
+        to_date = request.POST.get('to_date')
+        resource = request.POST.get('resource')
+        
+        if resource == 'sales':
+            sales = Sales.objects.filter(created_at__range=[from_date, to_date])
+            total_sales = sales.count()
+            total_cash = sales.aggregate(Sum('total_price'))['total_price__sum']
+            title = "Sales Reports"
+            return render(request, 'reports.html', {'sales': sales, 'title': title, 'total_sales': total_sales, 'total_cash': total_cash})
+        
+        if resource == 'products':
+            title = "Products Reports"
+            products = Product.objects.filter(created_at__range=[from_date, to_date])
+            return render(request, 'reports.html', {'products': products, 'title': title})
+        
+        if resource == 'purchases':
+            title = "Purchases Reports"
+            purchases = Purchase.objects.filter(created_at__range=[from_date, to_date])
+            return render(request, 'reports.html', {'purchases': purchases, 'title': title})
+    
+    return render(request, 'reports.html')

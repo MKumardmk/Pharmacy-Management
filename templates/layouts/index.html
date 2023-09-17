@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Document</title> -->
+    <title>{% block title %}
+      
+    {% endblock title %}</title>
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static "assets/css/bootstrap.min.css" %}">
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static "assets/css/style.css" %}">
+		<!-- Fontawesome CSS -->
+		<link rel="stylesheet" href="{% static "assets/plugins/fontawesome/css/fontawesome.min.css" %}">
+		<link rel="stylesheet" href="{% static "assets/plugins/fontawesome/css/all.min.css" %}">
+
+		<!-- Feathericon CSS -->
+		<link rel="stylesheet" href="{% static "assets/css/feathericon.min.css" %}">
+
+		<!-- Snackbar CSS -->
+		<link rel="stylesheet" href="{% static "assets/plugins/snackbar/snackbar.min.css" %}">
+		<!-- Toastr CSS -->
+		<link rel="stylesheet" href="{% static "assets/plugins/toastr/toastr.css" %}">
+		<!-- Datatables css -->
+		<link rel="stylesheet" href="{% static "assets/plugins/DataTables/datatables.css" %}">
+
+		<!-- Main CSS -->
+		<link rel="stylesheet" href="{% static "assets/css/style.css" %}">
+
+		<!-- Custom css -->
+		<link rel="stylesheet" href="{% static "css/app.css" %}">
+
+
+
+</head>
+<body>
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        {% include "includes/header.html" %}
+        <!-- /Header -->
+
+        <!-- Sidebar -->
+        {% include "includes/sidebar.html" %}
+        <!-- /Sidebar -->
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <div class="content container-fluid">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <!-- @stack('page-header') -->
+                    </div>
+                </div>
+                <!-- /Page Header -->
+               {% block content %}
+                 
+               {% endblock content %}
+
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+</body>
+<script src="{% static "assets/js/jquery-3.2.1.min.js" %}"></script>
+
+	<!-- Bootstrap Core JS -->
+	<script src="{% static "assets/js/popper.min.js" %}"></script>
+	<script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+	<!-- Slimscroll JS -->
+	<script src="{% static "assets/plugins/slimscroll/jquery.slimscroll.min.js" %}"></script>
+
+	<!-- Snackbar Js -->
+	<script src="{% static "assets/plugins/snackbar/snackbar.min.js" %}"></script>
+
+	<!-- Toastr Js -->
+	<script src="{% static "assets/plugins/toastr/toastr.min.js" %}"></script>
+
+	<!-- Custom JS -->
+	<script src="{% static "assets/js/script.js" %}"></script>
+	<script src="{% static "js/app.js" %}"></script>
+	<script src="{% static "assets/js/datatables-customizer.js" %}"></script>
+    {% block javascript %}
+      
+    {% endblock javascript %}
+
+</html>

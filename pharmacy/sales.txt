@@ -1,0 +1,154 @@
+from django.shortcuts import render
+from .models import Product, Sales
+
+def index(request):
+    title = "Sales"
+    products = Product.objects.all()
+    sales = Sales.objects.select_related('product').order_by('-id').all()
+    
+    context = {
+        'title': title,
+        'products': products,
+        'sales': sales
+    }
+    
+    return render(request, 'sales.html', context)
+
+
+from django.shortcuts import redirect
+from .models import Product, Purchase, Sales
+from django.contrib import messages
+
+def store(request):
+    product_id = request.POST.get('product')
+    quantity = request.POST.get('quantity')
+
+    # Validate the inputs
+    if not product_id or not quantity:
+        messages.error(request, 'Product and quantity are required.')
+        return redirect('sales')
+
+    try:
+        quantity = int(quantity)
+        if quantity < 1:
+            messages.error(request, 'Quantity must be a positive integer.')
+            return redirect('sales')
+    except ValueError:
+        messages.error(request, 'Quantity must be a valid integer.')
+        return redirect('sales')
+
+    # Find the sold product
+    sold_product = Product.objects.filter(id=product_id).first()
+    if not sold_product:
+        messages.error(request, 'Invalid product.')
+        return redirect('sales')
+
+    # Update the quantity of the sold item from purchases
+    purchased_item = Purchase.objects.filter(product=sold_product).first()
+    if not purchased_item:
+        messages.error(request, 'No purchase record found for the product.')
+        return redirect('sales')
+
+    new_quantity = purchased_item.quantity - quantity
+    if new_quantity < 0:
+        messages.error(request, 'Insufficient quantity available.')
+        return redirect('sales')
+
+    purchased_item.quantity = new_quantity
+    purchased_item.save()
+
+    # Calculate the item's total price
+    total_price = quantity * sold_product.price
+
+    Sales.objects.create(product=sold_product, quantity=quantity, total_price=total_price)
+
+    if new_quantity <= 1:
+        # Send notification for low stock
+        product = Purchase.objects.filter(quantity__lte=1).first()
+        if product:
+            # Implement your notification logic here
+            pass
+
+        messages.warning(request, 'Product is running out of stock!')
+
+    messages.success(request, 'Product has been sold.')
+    return redirect('sales')
+
+
+from django.shortcuts import redirect
+from .models import Product, Purchase, Sales
+from django.contrib import messages
+
+def update(request):
+    product_id = request.POST.get('product')
+    quantity = request.POST.get('quantity')
+
+    # Validate the inputs
+    if not product_id or not quantity:
+        messages.error(request, 'Product and quantity are required.')
+        return redirect('sales')
+
+    try:
+        quantity = int(quantity)
+        if quantity < 0:
+            messages.error(request, 'Quantity must be a non-negative integer.')
+            return redirect('sales')
+    except ValueError:
+        messages.error(request, 'Quantity must be a valid integer.')
+        return redirect('sales')
+
+    # Find the sold product
+    sold_product = Product.objects.filter(id=product_id).first()
+    if not sold_product:
+        messages.error(request, 'Invalid product.')
+        return redirect('sales')
+
+    # Update the quantity of the sold item from purchases
+    purchased_item = Purchase.objects.filter(product=sold_product).first()
+    if not purchased_item:
+        messages.error(request, 'No purchase record found for the product.')
+        return redirect('sales')
+
+    new_quantity = purchased_item.quantity - quantity
+    if new_quantity > 0:
+        purchased_item.quantity = new_quantity
+        purchased_item.save()
+
+        # Calculate the item's total price
+        total_price = quantity * sold_product.price
+
+        Sales.objects.create(product=sold_product, quantity=quantity, total_price=total_price)
+
+        messages.success(request, 'Product has been sold.')
+    elif new_quantity <= 3 and new_quantity != 0:
+        # Send notification for low stock
+        product = Purchase.objects.filter(quantity__lte=3).first()
+        if product:
+            # Implement your notification logic here
+            pass
+
+        messages.warning(request, 'Product is running out of stock!')
+    else:
+        messages.info(request, 'Please check purchase product quantity.')
+
+    return redirect('sales')
+
+
+
+from django.shortcuts import redirect
+from .models import Sales
+from django.contrib import messages
+
+def destroy(request):
+    sale_id = request.POST.get('id')
+
+    # Find the sale record
+    sale = Sales.objects.filter(id=sale_id).first()
+    if not sale:
+        messages.error(request, 'Invalid sale record.')
+        return redirect('sales')
+
+    sale.delete()
+
+    messages.success(request, 'Sales has been deleted.')
+    return redirect('sales')

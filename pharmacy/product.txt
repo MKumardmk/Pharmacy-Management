@@ -1,0 +1,64 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Product, Purchase
+from .forms import ProductForm
+
+def index(request):
+    title = "products"
+    products = Product.objects.select_related('purchase').all()
+    return render(request, 'products.html', {'title': title, 'products': products})
+
+def create(request):
+    title = "Add Product"
+    purchases = Purchase.objects.all()
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            price = product.price
+            if product.discount > 0:
+                price = product.discount * product.price
+            product.price = price
+            product.save()
+            messages.success(request, 'Product has been added.')
+            return redirect('products:index')
+    else:
+        form = ProductForm()
+    return render(request, 'add-product.html', {'title': title, 'form': form, 'purchases': purchases})
+
+def expired(request):
+    title = "Expired Products"
+    products = Purchase.objects.filter(expiry_date=datetime.date.today())
+    return render(request, 'expired.html', {'title': title, 'products': products})
+
+def outstock(request):
+    title = "Outstocked Products"
+    products = Purchase.objects.filter(quantity__lte=0)
+    product = products.first()
+    # auth.user.notify(new_stock_alert(product))
+    return render(request, 'outstock.html', {'title': title, 'products': products})
+
+def show(request, id):
+    title = "Edit Product"
+    product = get_object_or_404(Product, id=id)
+    purchases = Purchase.objects.all()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            product = form.save(commit=False)
+            price = product.price
+            if product.discount > 0:
+                price = product.discount * product.price
+            product.price = price
+            product.save()
+            messages.success(request, 'Product has been updated.')
+            return redirect('products:index')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'edit-product.html', {'title': title, 'form': form, 'product': product, 'purchases': purchases})
+
+def destroy(request):
+    product = get_object_or_404(Product, id=request.POST.get('id'))
+    product.delete()
+    messages.success(request, 'Product has been deleted.')
+    return redirect('products:index')

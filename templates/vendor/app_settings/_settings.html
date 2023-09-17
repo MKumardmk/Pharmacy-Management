@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-md-offset-2">
+
+            {% comment %} {# Include flash partial if needed #} {% endcomment %}
+            {# {% include config('app_settings.flash_partial') %} #}
+
+            <form method="post" action="{{ app_settings.url }}" class="form-horizontal mb-3" enctype="multipart/form-data" role="form">
+                {% csrf_token %}
+
+                {% if settingsUI and settingsUI.sections %}
+
+                    {% for section, fields in settingsUI.sections.items %}
+                        {% with fields as section_fields %}
+                            <div class="">
+                                {% for field in section_fields.inputs %}
+                                        <div style="background-color: #f7ecb5; box-shadow: inset 2px 2px 7px #e0c492; border-radius: 0.3rem; padding: 1rem; margin-bottom: 1rem">
+                                            Defined setting <strong>{{ field.name }}</strong> with type <code>{{ field.type }}</code> field is not supported. <br>
+                                            You can create a <code>fields/{{ field.type }}.html</code> to render this input however you want.
+                                        </div>
+                                        {% comment %} {% include 'app_settings/fields/' ~ field.type with field=field %} {% endcomment %}
+                                {% endfor %}
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row m-b-md">
+                    <div class="col-md-12">
+                        <button class="btn-primary btn">
+                            {{ settingsUI.submit_btn_text|default:'Save Settings' }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

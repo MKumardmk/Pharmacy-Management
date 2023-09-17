@@ -1,0 +1,76 @@
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-inner slimscroll">
+		<div id="sidebar-menu" class="sidebar-menu">
+			
+			<ul>
+				<li class="menu-title"> 
+					<span>Main</span>
+				</li>
+				<li class=""> 
+					<a href="{% url 'dashboard' %}"><i class="fe fe-home"></i> <span>Dashboard</span></a>
+				</li>
+				
+				<li class=""> 
+					<a href="{% url 'categories' %}"><i class="fe fe-layout"></i> <span>Categories</span></a>
+				</li>
+				
+				<li class="submenu">
+					<a href="#"><i class="fe fe-document"></i> <span> Products</span> <span class="menu-arrow"></span></a>
+					<ul style="display: none;">
+						<li><a class="#" href="{% url 'products' %}">Products</a></li>
+						<li><a class="#" href="{% url 'add_product' %}">Add Product</a></li>
+						<li><a class="#" href="{% url 'outstock_products' %}">Out-Stock</a></li>
+						<li><a class="#" href="{% url 'expired_products' %}">Expired</a></li>
+					</ul>
+				</li>
+				
+				<li class="submenu">
+					<a href="#"><i class="fe fe-star-o"></i> <span> Purchase</span> <span class="menu-arrow"></span></a>
+					<ul style="display: none;">
+						<li><a class="" href="{% url 'purchases' %}">Purchase</a></li>
+						<li><a class="" href="{% url 'add_purchase' %}">Add Purchase</a></li>
+					</ul>
+				</li>
+				<li><a class="" href="{% url 'sales' %}"><i class="fe fe-activity"></i> <span>Sales</span></a></li>
+				
+				<li class="submenu">
+					<a href="#"><i class="fe fe-user"></i> <span> Supplier</span> <span class="menu-arrow"></span></a>
+					<ul style="display: none;">
+						<li><a class="" href="{% url 'suppliers' %}">Supplier</a></li>
+						<li><a class="" href="#">Add Supplier</a></li>
+					</ul>
+				</li>
+				<li class="submenu">
+					<a href="#"><i class="fe fe-document"></i> <span> Reports</span> <span class="menu-arrow"></span></a>
+					<ul style="display: none;">
+						<li><a class="" href="{% url 'reports' %}">Reports</a></li>
+					</ul>
+				</li>
+				<li class="submenu">
+					<a href="#"><i class="fe fe-lock"></i> <span> Access Control</span> <span class="menu-arrow"></span></a>
+					<ul style="display: none;">
+						<li><a class="" href="{% url 'permissions' %}">Permissions</a></li>
+						
+						<li><a class="" href="#">Roles</a></li>
+						
+					</ul>
+				</li>	
+				<li class=""> 
+					<a href="#"><i class="fe fe-users"></i> <span>Users</span></a>
+				</li>
+				
+				<li class=""> 
+					<a href="{% url 'profile' %}"><i class="fe fe-user-plus"></i> <span>Profile</span></a>
+				</li>
+				<li class=""> 
+					<a href="{% url 'settings' %}">
+						<i class="fa fa-gears"></i>
+						 <span> Settings</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- /Sidebar -->

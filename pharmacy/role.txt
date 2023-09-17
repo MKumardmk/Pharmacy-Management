@@ -1,0 +1,57 @@
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+
+def destroy(request):
+    role_id = request.POST.get('id')
+    role = get_object_or_404(Role, id=role_id)
+    role.delete()
+    
+    messages.success(request, 'Role deleted successfully!!')
+    return redirect('roles_list')
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+
+def update(request):
+    role_id = request.POST.get('id')
+    role = get_object_or_404(Role, id=role_id)
+    
+    role_name = request.POST.get('role')
+    role.name = role_name
+    role.save()
+    
+    permissions = request.POST.getlist('permission')
+    role.permissions.set(permissions)
+    
+    messages.success(request, 'Role updated successfully!!')
+    return redirect('roles_list')
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+
+def store(request):
+    role_name = request.POST.get('role')
+    permissions = request.POST.getlist('permission')
+
+    role = Role.objects.create(name=role_name)
+    role.permissions.add(*permissions)
+    
+    messages.success(request, 'Role created successfully!!')
+    return redirect('roles_list')
+
+
+from django.shortcuts import render
+from .models import Role, Permission
+
+def index(request):
+    title = "User Roles"
+    roles = Role.objects.all().prefetch_related('permissions')
+    permissions = Permission.objects.all()
+    context = {
+        'title': title,
+        'roles': roles,
+        'permissions': permissions,
+    }
+    return render(request, 'roles.html', context)

@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        {% comment %} <title>{{ucfirst(AppSettings::get('app_name', 'App'))}} - {{ucfirst($title)}}</title> {% endcomment %}
+        {% comment %} <link rel="shortcut icon" type="image/x-icon" href="@if(!empty(AppSettings::get('logo'))) {{asset('storage/'.AppSettings::get('favicon'))}} @else{{asset('assets/img/favicon.png')}} @endif"> {% endcomment %}
+
+		<!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+		<!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+		<!-- Main CSS -->
+        <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+		
+    </head>
+    <body>
+
+		<!-- Main Wrapper -->
+        <div class="main-wrapper login-body">
+            <div class="login-wrapper">
+            	<div class="container">
+                	<div class="loginbox">
+                    	<div class="login-left">
+							<img class="img-fluid" src="{% static 'assets/img/logo.png' %}" alt="Logo">
+                        </div>
+                        <div class="login-right">
+							<div class="login-right-wrap">
+								{% block content %}
+                                {% endblock content %}
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<!-- /Main Wrapper -->
+
+    </body>
+	<!-- jQuery -->
+	<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+
+	<!-- Bootstrap Core JS -->
+	<script src="{% static 'assets/js/popper.min.js' %}"></script>
+	<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+	<!-- Custom JS -->
+	<script src="{% static 'assets/js/script.js' %}"></script>
+	<script src="{% static 'js/app.js' %}"></script>
+
+{% block extrajs %}{% endblock extrajs %}
+</html>

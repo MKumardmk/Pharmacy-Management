@@ -1,0 +1,115 @@
+from django.shortcuts import render
+from .models import Supplier
+
+def index(request):
+    title = "Suppliers"
+    suppliers = Supplier.objects.all()
+    return render(request, 'suppliers.html', {'title': title, 'suppliers': suppliers})
+
+
+from django.shortcuts import render
+from .models import Supplier
+from products.models import Product
+
+def create(request):
+    title = "Add Supplier"
+    products = Product.objects.all()
+    return render(request, 'add_supplier.html', {'title': title, 'products': products})
+
+
+from django.shortcuts import redirect
+from .models import Supplier
+
+def store(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        product = request.POST.get('product')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        company = request.POST.get('company')
+        address = request.POST.get('address')
+        description = request.POST.get('description')
+
+        Supplier.objects.create(
+            name=name,
+            product=product,
+            email=email,
+            phone=phone,
+            company=company,
+            address=address,
+            description=description
+        )
+
+        notification = {
+            'message': 'Supplier has been added',
+            'alert-type': 'success'
+        }
+
+        return redirect('suppliers')
+
+
+from django.shortcuts import get_object_or_404, render
+from .models import Supplier
+from .forms import SupplierForm
+
+def show(request, id):
+    title = "Edit Supplier"
+    products = Product.objects.all()
+    supplier = get_object_or_404(Supplier, pk=id)
+
+    if request.method == 'POST':
+        form = SupplierForm(request.POST, instance=supplier)
+        if form.is_valid():
+            form.save()
+            notification = {
+                'message': 'Supplier has been updated',
+                'alert-type': 'success'
+            }
+            return redirect('suppliers')
+    else:
+        form = SupplierForm(instance=supplier)
+
+    return render(request, 'edit-supplier.html', {
+        'title': title,
+        'products': products,
+        'supplier': supplier,
+        'form': form
+    })
+
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Supplier
+from .forms import SupplierForm
+
+def update(request, id):
+    supplier = get_object_or_404(Supplier, pk=id)
+
+    if request.method == 'POST':
+        form = SupplierForm(request.POST, instance=supplier)
+        if form.is_valid():
+            form.save()
+            notification = {
+                'message': 'Supplier has been updated',
+                'alert-type': 'success'
+            }
+            return redirect('suppliers')
+    else:
+        form = SupplierForm(instance=supplier)
+
+    return render(request, 'edit-supplier.html', {
+        'title': 'Edit Supplier',
+        'form': form
+    })
+
+
+from django.shortcuts import get_object_or_404, redirect
+
+def destroy(request, id):
+    supplier = get_object_or_404(Supplier, pk=id)
+    supplier.delete()
+    
+    notification = {
+        'message': 'Supplier has been deleted',
+        'alert-type': 'success'
+    }
+    return redirect('suppliers').with_notification(notification)

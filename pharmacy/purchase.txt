@@ -1,0 +1,202 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Purchase, Category, Supplier
+from .forms import PurchaseForm
+
+def index(request):
+    title = "purchases"
+    purchases = Purchase.objects.select_related('category').all()
+    return render(request, 'purchases.html', {'title': title, 'purchases': purchases})
+
+def create(request):
+    title = "Add Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            purchase.image = form.cleaned_data.get('image')
+            purchase.save()
+            messages.success(request, 'Purchase has been added.')
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm()
+    return render(request, 'add-purchase.html', {'title': title, 'form': form, 'categories': categories, 'suppliers': suppliers})
+
+def show(request, id):
+    title = "Edit Purchase"
+    purchase = get_object_or_404(Purchase, id=id)
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES, instance=purchase)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            purchase.image = form.cleaned_data.get('image')
+            purchase.save()
+            messages.success(request, 'Purchase has been updated.')
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm(instance=purchase)
+    return render(request, 'edit-purchase.html', {'title': title, 'form': form, 'purchase': purchase, 'categories': categories, 'suppliers': suppliers})
+
+def destroy(request):
+    purchase = get_object_or_404(Purchase, id=request.POST.get('id'))
+    purchase.delete()
+    messages.success(request, 'Purchase has been deleted.')
+    return redirect('purchases:index')
+
+
+
+
+
+
+
+
+
+
+
+
+===================
+
+
+from django.shortcuts import render
+from .models import Purchase
+
+def index(request):
+    title = "purchases"
+    purchases = Purchase.objects.select_related('category').all()
+    return render(request, 'purchases.html', {'title': title, 'purchases': purchases})
+
+
+from django.shortcuts import render
+from .models import Category, Supplier
+
+def create(request):
+    title = "add Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    return render(request, 'add_purchase.html', {'title': title, 'categories': categories, 'suppliers': suppliers})
+
+
+from django.shortcuts import redirect
+from .models import Purchase
+from .forms import PurchaseForm
+
+def store(request):
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            if 'image' in request.FILES:
+                purchase.image = request.FILES['image']
+            purchase.save()
+            notifications = {
+                'message': "Purchase has been added",
+                'alert-type': 'success'
+            }
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm()
+    
+    title = "add Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    return render(request, 'add_purchase.html', {'title': title, 'categories': categories, 'suppliers': suppliers, 'form': form})
+
+
+
+from django.shortcuts import get_object_or_404, render
+from .models import Purchase
+from .forms import PurchaseForm
+
+def show(request, id):
+    purchase = get_object_or_404(Purchase, id=id)
+    
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES, instance=purchase)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            if 'image' in request.FILES:
+                purchase.image = request.FILES['image']
+            purchase.save()
+            notifications = {
+                'message': "Purchase has been updated",
+                'alert-type': 'success'
+            }
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm(instance=purchase)
+    
+    title = "Edit Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    return render(request, 'edit_purchase.html', {'title': title, 'purchase': purchase, 'categories': categories, 'suppliers': suppliers, 'form': form})
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Purchase
+from .forms import PurchaseForm
+
+def show(request, id):
+    purchase = get_object_or_404(Purchase, pk=id)
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES, instance=purchase)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            if 'image' in request.FILES:
+                purchase.image = request.FILES['image']
+            purchase.save()
+            notifications = {
+                'message': "Purchase has been updated",
+                'alert-type': 'success'
+            }
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm(instance=purchase)
+    
+    title = "Edit Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    return render(request, 'edit_purchase.html', {'title': title, 'purchase': purchase, 'categories': categories, 'suppliers': suppliers, 'form': form})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Purchase
+from .forms import PurchaseForm
+
+def update(request, id):
+    purchase = get_object_or_404(Purchase, pk=id)
+    if request.method == 'POST':
+        form = PurchaseForm(request.POST, request.FILES, instance=purchase)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            if 'image' in request.FILES:
+                purchase.image = request.FILES['image']
+            purchase.save()
+            notifications = {
+                'message': "Purchase has been updated",
+                'alert-type': 'success'
+            }
+            return redirect('purchases:index')
+    else:
+        form = PurchaseForm(instance=purchase)
+    
+    title = "Edit Purchase"
+    categories = Category.objects.all()
+    suppliers = Supplier.objects.all()
+    return render(request, 'edit_purchase.html', {'title': title, 'purchase': purchase, 'categories': categories, 'suppliers': suppliers, 'form': form})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Purchase
+
+def destroy(request, id):
+    purchase = get_object_or_404(Purchase, pk=id)
+    purchase.delete()
+    notification = {
+        'message': "Purchase has been deleted",
+        'alert-type': 'success'
+    }
+    return redirect('purchases:index')
